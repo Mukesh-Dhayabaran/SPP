@@ -11,8 +11,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LoginAPI, RegisterAPI } from "./services/api";
 import { storeUserData } from "./services/storage";
 import { isAuthenticated } from "./services/auth";
-import { VisibilityIcon, VisibilityOffIcon } from "../../assets/icons";
-import { GoogleSignIn } from "../../assets/google";
+import { VisibilityIcon, VisibilityOffIcon } from "../assets/icons";
+import { GoogleSignIn } from "../assets/google";
 
 export default function Forms({ formAttributes }) {
   const navigate = useNavigate();
