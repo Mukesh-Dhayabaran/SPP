@@ -23,10 +23,6 @@ export function Prediction({ result, onBack }) {
             {result.category}
           </div>
         </div>
-        {/* <p style={{ fontSize: 36, margin: "12px 0" }}></p> */}
-        {/* <p style={{ fontSize: 18 }}>
-        Category: <strong></strong>
-        </p> */}
         </div>
         <Button
           sx={{

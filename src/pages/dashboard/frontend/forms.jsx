@@ -195,60 +195,6 @@ export function Forms({ onPredicted }) {
               <MenuItem value="High">High</MenuItem>
             </Select>
           </FormControl>
-                {/* <TextField
-                label="Hours Studied Per Week"
-                type="number"
-                value={inputs.Hours_Studied_Per_Week}
-                onChange={(e) => setField("Hours_Studied_Per_Week", e.target.value)}
-                error={!!errors.Hours_Studied_Per_Week}
-                />
-                <TextField
-                label="Attendance (%)"
-                type="number"
-                value={inputs.Attendance}
-                onChange={(e) => setField("Attendance", e.target.value)}
-                error={!!errors.Attendance}
-                />
-                <TextField
-                label="Previous Exam Percent"
-                type="number"
-                value={inputs.Previous_Exam_Percent}
-                onChange={(e) => setField("Previous_Exam_Percent", e.target.value)}
-                error={!!errors.Previous_Exam_Percent}
-                />
-                <TextField
-                label="Failures"
-                type="number"
-                value={inputs.Failures}
-                onChange={(e) => setField("Failures", e.target.value)}
-                error={!!errors.Failures}
-              /> */}
-          {/* <FormControlLabel control={<Checkbox checked={inputs.Sports} onChange={(e) => setField("Sports", e.target.checked)} sx={{
-                    // color: "var(--color-violet-900)",
-                    "&.Mui-checked": {
-                        color: "var(--color-violet-900)",
-                        },
-                        }}/>} label="Sports" />
-                        <FormControlLabel control={<Checkbox checked={inputs.Tuition} onChange={(e) => setField("Tuition", e.target.checked)} sx={{
-                            // color: "var(--color-violet-900)",
-                            "&.Mui-checked": {
-                                color: "var(--color-violet-900)",
-                                },
-                    }}/>} label="Tuition" /> */}
-          {/* <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          Parents Support
-          <select value={inputs.Parents_Support} onChange={(e) => setField("Parents_Support", e.target.value)} style={{ padding: 8 }}>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            </select>
-            </label> */}
-          {/* <FormControlLabel control={<Checkbox checked={inputs.Internet_Facility} onChange={(e) => setField("Internet_Facility", e.target.checked)} sx={{
-                  // color: "var(--color-violet-900)",
-                  "&.Mui-checked": {
-                    color: "var(--color-violet-900)",
-                  },
-                }}/>} label="Internet Facility" /> */}
         </div>
       </div>
 
