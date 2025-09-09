@@ -83,10 +83,7 @@ export default function Designation() {
                 '&:hover': {
                     backgroundColor: 'success.dark',
                 },
-            }}
-                onClick={()=>{
-                    navigate("/register");
-                }}>
+            }}>
               Continue as Teacher
             </Button>
           </div>
