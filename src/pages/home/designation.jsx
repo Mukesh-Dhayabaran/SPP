@@ -18,7 +18,7 @@ export default function Designation() {
                onClick={()=>{
                 localStorage.setItem("designation","student");
                 // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("designation").toLowerCase()}`);
+                navigate(`${localStorage.getItem("process").toLowerCase()}`);
             }}
             >
             <img
@@ -45,9 +45,8 @@ export default function Designation() {
                     backgroundColor: 'primary.dark',
                 },
             }}
-            onClick={()=>{
-                navigate("/register");
-            }}
+            
+            
             >
               Continue as Student
             </Button>
@@ -58,7 +57,7 @@ export default function Designation() {
                onClick={()=>{
                 localStorage.setItem("designation","teacher");
                // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("designation").toLowerCase()}`);
+                navigate(`${localStorage.getItem("process").toLowerCase()}`);
             }}       
                >
             <img
