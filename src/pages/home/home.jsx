@@ -16,14 +16,14 @@ export default function Home() {
             key={key}
             sx={{
               justifyContent: 'center',
-              backgroundColor: 'rgba(72, 11, 209, 0.06)',
-              color: 'black',
+              backgroundColor: 'var(--color-violet-900)',
+              color: 'white',
               px: 4,
               py: 1,
               borderRadius: 2,
               '&:hover': {
-                backgroundColor: 'rgb(91 33 182)',
-                color: 'white',
+                backgroundColor: 'var(--color-violet-800)',
+            
               },
             }}
           >
@@ -52,14 +52,13 @@ export default function Home() {
               <Button
                 key={key}
                 sx={{
-                  backgroundColor: 'rgba(72, 11, 209, 0.06)',
-                  color: 'black',
+                  backgroundColor: 'var(--color-violet-900)',
+                  color: 'white',
                   px: 4,
                   py: 1,
                   borderRadius: 2,
                   '&:hover': {
-                    backgroundColor: 'rgb(91 33 182)',
-                    color: 'white',
+                    backgroundColor: 'var(--color-violet-800)'
                   },
                 }}
                 onClick={() => navigate(`/${bottombar.toLowerCase()}`)}
