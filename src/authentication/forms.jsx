@@ -8,16 +8,20 @@ import {
   Button,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LoginAPI, RegisterAPI } from "./services/api";
+import { fetchUserProfile, LoginAPI, RegisterAPI } from "./services/api";
 import { storeUserData } from "./services/storage";
 import { isAuthenticated } from "./services/auth";
 import { VisibilityIcon, VisibilityOffIcon } from "../assets/icons";
 import { GoogleSignIn } from "../assets/google";
 
 export default function Forms({ formAttributes }) {
+
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const designationValue = sessionStorage.getItem("designation");
+
 
   const initialStateErrors = {
     name: { required: false },
@@ -45,7 +49,7 @@ export default function Forms({ formAttributes }) {
     e.preventDefault();
     let hasError = false;
     let errors = initialStateErrors;
-    if (inputs.name === "" && location.pathname === "/register") {
+    if (inputs.name === "" && location.pathname.includes("/register")) {
       errors.name.required = true;
       hasError = true;
     }
@@ -61,9 +65,17 @@ export default function Forms({ formAttributes }) {
     if (hasError === true) setLoad(false);
 
     if (!hasError) {
+
+      let modifiedInputs = { ...inputs };
+
+  if (designationValue === "student") {
+    modifiedInputs.email = inputs.email + "@gmail.com";
+  }
+
+
       // setLoad(false);
-      if (location.pathname === "/register") {
-        RegisterAPI(inputs)
+      if (location.pathname.includes("/register")) {
+        RegisterAPI(modifiedInputs)
           .then((res) => {
             storeUserData(res.data.idToken);
           })
@@ -82,11 +94,20 @@ export default function Forms({ formAttributes }) {
             setLoad(false);
           });
       }
-      if (location.pathname === "/login") {
-        LoginAPI(inputs)
+      if (location.pathname.includes("/login")) {
+        
+        LoginAPI(modifiedInputs)
           .then((res) => {
             storeUserData(res.data.idToken);
+            const idToken = res.data.idToken;
+            return fetchUserProfile(idToken);
+
           })
+          .then((profileRes) => {
+    const displayName = profileRes.data.users[0].displayName;
+    sessionStorage.setItem("username", displayName);
+  })
+
           .catch((err) => {
             if (err.response.data.error.message.includes("INVALID")) {
               setErrors({
@@ -101,22 +122,16 @@ export default function Forms({ formAttributes }) {
           });
       }
     }
-    // console.log(errors.custom_error);
 
     setErrors(errors);
   };
 
-  // const handleGoogleSignIn = () => {
-  //   signInWithPopup(auth, provider).then((result) => {
-  //     storeUserData(result.user.accessToken);
-  //     navigate("/dashboard");
-  //   });
-  // };
 
   const handleInput = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
+  
   if (isAuthenticated()) {
     navigate("/dashboard");
   }
@@ -217,30 +232,31 @@ export default function Forms({ formAttributes }) {
 
           {!load ? (
             <Button
-              type="submit"
-              name="submit"
-              sx={{
-  backgroundColor: "var(--color-violet-900)",
-  fontSize: "20px",
-  padding: "17px 185px",
-  textAlign: "center",
-  color: "#fff",
-  cursor: "pointer",
-  "&:hover": {
-    backgroundColor: "var(--color-violet-500)",
-  },
-}}
-              // value={}
-              // className="bg-violet-900 text-[20px]  py-5 px-6 lg:px-48 text-center  text-white cursor-pointer hover:bg-violet-500"
-              onClick={(e) => {
-                setLoad(true);
-                handleSubmit(e);
-              }}
-            >{formAttributes[0].head}</Button>
+  type="submit"
+  name="submit"
+  sx={{
+    backgroundColor: "var(--color-violet-900)",
+    fontSize: "20px",
+    padding: "17px 185px",
+    textAlign: "center",
+    color: "#fff",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "var(--color-violet-500)",
+    },
+  }}
+  onClick={(e) => {
+    e.preventDefault(); // Prevent default form submission
+    setLoad(true);
+    handleSubmit(e);
+  }}
+>
+  {formAttributes[0]?.head ?? "Submit"}
+</Button>
           ) : (
             <span
               className={`flex justify-center items-center w-full py-3.5 px-6 ${
-                location.pathname === "/register" ? "lg:px-52" : "lg:px-49"
+                location.pathname.includes("/register") ? "lg:px-52" : "lg:px-49"
               }  bg-white/10 border border-white/30 backdrop-blur-[20px] shadow-[0_4px_30px_rgba(0,0,0,0.1)]`}
             >
               <CircularProgress sx={{ color: " var(--color-violet-900)" }} />
@@ -254,22 +270,22 @@ export default function Forms({ formAttributes }) {
             <a
               href={
                 formAttributes[0].footerLink === "Login"
-                  ? "/login"
-                  : "/register"
+                  ? "/designation/login"
+                  : "/designation/register"
               }
               className="text-violet-900 inline cursor-pointer text-xl"
-              // onClick={() => {
-              //   navigate("/login");
-              // }}
             >
               {" "}
               {formAttributes[0].footerLink}
             </a>
           </p>
 
-          <p className="text-xl  text-black">Or</p>
-            
+          { designationValue === "teacher" &&
+          <>
+            <p className="text-xl  text-black">Or</p>
             <GoogleSignIn/>
+          </>
+          }
 
         </div>
       </div>

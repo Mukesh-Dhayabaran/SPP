@@ -61,7 +61,9 @@ export default function Home() {
                     backgroundColor: 'var(--color-violet-800)'
                   },
                 }}
-                onClick={() => navigate(`/${bottombar.toLowerCase()}`)}
+                onClick={() =>{ 
+              sessionStorage.setItem("process",bottombar.toLowerCase()),
+              navigate("/designation")}}
               >
                 {bottombar}
               </Button>

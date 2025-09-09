@@ -10,6 +10,7 @@ export const GoogleSignIn = () => {
     const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider).then((result) => {
       storeUserData(result.user.accessToken);
+      sessionStorage.setItem("username",result.user.displayName); 
       navigate("/dashboard");
     });
   };

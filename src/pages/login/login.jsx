@@ -1,16 +1,19 @@
-import { EmailIcon, LockIcon } from "../../assets/icons";
+import { EmailIcon,AppRegistrationIcon, LockIcon } from "../../assets/icons";
 import Forms from "../../authentication/forms";
 import backImg from "../../assets/images/back_img.png";
 
 export default function Login() {
+
+    const designationValue = sessionStorage.getItem("designation");
+
   const textFiledAttributes = [
     {
-      icon: <EmailIcon />,
-      label: "Email",
+      icon: designationValue == "teacher" ? <EmailIcon /> : <AppRegistrationIcon/>,
+      label: designationValue == "teacher" ? "Email" : "Register No" ,
       name: "email",
       type: "email",
       variant: "filled",
-      errorMessage: "Email is required.",
+      errorMessage: designationValue == "teacher" ? "Email is required." : "Register No is required.",
       isPassword: false,
     },
     {
