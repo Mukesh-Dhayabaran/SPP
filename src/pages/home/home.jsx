@@ -62,7 +62,9 @@ export default function Home() {
                     color: 'white',
                   },
                 }}
-                onClick={() => navigate(`/${bottombar.toLowerCase()}`)}
+                onClick={() =>{ 
+              localStorage.setItem("process",bottombar.toLowerCase()),
+              navigate("/designation")}}
               >
                 {bottombar}
               </Button>
