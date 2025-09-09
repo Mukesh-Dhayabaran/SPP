@@ -8,7 +8,7 @@ import {
   Button,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LoginAPI, RegisterAPI } from "./services/api";
+import { fetchUserProfile, LoginAPI, RegisterAPI } from "./services/api";
 import { storeUserData } from "./services/storage";
 import { isAuthenticated } from "./services/auth";
 import { VisibilityIcon, VisibilityOffIcon } from "../assets/icons";
@@ -20,7 +20,7 @@ export default function Forms({ formAttributes }) {
 
   const location = useLocation();
 
-  const designationValue = localStorage.getItem("designation");
+  const designationValue = sessionStorage.getItem("designation");
 
 
   const initialStateErrors = {
@@ -65,11 +65,13 @@ export default function Forms({ formAttributes }) {
     if (hasError === true) setLoad(false);
 
     if (!hasError) {
+
       let modifiedInputs = { ...inputs };
 
   if (designationValue === "student") {
     modifiedInputs.email = inputs.email + "@gmail.com";
   }
+
 
       // setLoad(false);
       if (location.pathname.includes("/register")) {
@@ -93,10 +95,19 @@ export default function Forms({ formAttributes }) {
           });
       }
       if (location.pathname.includes("/login")) {
+        
         LoginAPI(modifiedInputs)
           .then((res) => {
             storeUserData(res.data.idToken);
+            const idToken = res.data.idToken;
+            return fetchUserProfile(idToken);
+
           })
+          .then((profileRes) => {
+    const displayName = profileRes.data.users[0].displayName;
+    sessionStorage.setItem("username", displayName);
+  })
+
           .catch((err) => {
             if (err.response.data.error.message.includes("INVALID")) {
               setErrors({
@@ -111,22 +122,16 @@ export default function Forms({ formAttributes }) {
           });
       }
     }
-    // console.log(errors.custom_error);
 
     setErrors(errors);
   };
 
-  // const handleGoogleSignIn = () => {
-  //   signInWithPopup(auth, provider).then((result) => {
-  //     storeUserData(result.user.accessToken);
-  //     navigate("/dashboard");
-  //   });
-  // };
 
   const handleInput = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
+  
   if (isAuthenticated()) {
     navigate("/dashboard");
   }
@@ -269,9 +274,6 @@ export default function Forms({ formAttributes }) {
                   : "/designation/register"
               }
               className="text-violet-900 inline cursor-pointer text-xl"
-              // onClick={() => {
-              //   navigate("/login");
-              // }}
             >
               {" "}
               {formAttributes[0].footerLink}

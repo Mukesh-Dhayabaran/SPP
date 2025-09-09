@@ -4,7 +4,7 @@ import backImg from "../../assets/images/back_img.png";
 
 export default function Login() {
 
-    const designationValue = localStorage.getItem("designation");
+    const designationValue = sessionStorage.getItem("designation");
 
   const textFiledAttributes = [
     {

@@ -16,9 +16,9 @@ export default function Designation() {
           {/* Student Card */}
           <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
-                localStorage.setItem("designation","student");
-                // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("process").toLowerCase()}`);
+                sessionStorage.setItem("designation","student");
+                // console.log(sesssionStorage.getItem("designation"));
+                navigate(`${sessionStorage.getItem("process").toLowerCase()}`);
             }}
             >
             <img
@@ -55,9 +55,9 @@ export default function Designation() {
           {/* Teacher Card */}
           <div className="bg-white p-10 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
-                localStorage.setItem("designation","teacher");
-               // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("process").toLowerCase()}`);
+                sessionStorage.setItem("designation","teacher");
+               // console.log(sessionStorage.getItem("designation"));
+                navigate(`${sessionStorage.getItem("process").toLowerCase()}`);
             }}       
                >
             <img

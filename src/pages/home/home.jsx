@@ -63,7 +63,7 @@ export default function Home() {
                   },
                 }}
                 onClick={() =>{ 
-              localStorage.setItem("process",bottombar.toLowerCase()),
+              sessionStorage.setItem("process",bottombar.toLowerCase()),
               navigate("/designation")}}
               >
                 {bottombar}
