@@ -4,6 +4,7 @@ import Home from './pages/home/home'
 import Register from './pages/register/register'
 import Login from './pages/login/login'
 import Dashboard from './pages/dashboard/frontend/dashboard'
+import Designation from './pages/home/designation'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home/>} />     
+          <Route path="/designation" element={<Designation/>} />     
           <Route path="/register" element={<Register/>} />     
           <Route path="/login" element={<Login/>} />      
           <Route path="/dashboard" element={<Dashboard/>} />      
