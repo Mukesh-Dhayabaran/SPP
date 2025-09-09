@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Home() {
   const navigate = useNavigate();
   const top = ['Home', 'About', 'Contact'];
-  const bottom = ['Login', 'Register'];
+  const bottom = ['Register','Login'];
 
   return (
    <div className="relative flex flex-col justify-center items-start h-screen bg-gradient-to-r">
@@ -22,7 +22,7 @@ export default function Home() {
               py: 1,
               borderRadius: 2,
               '&:hover': {
-                backgroundColor: 'var(--color-violet-800)',
+                backgroundColor: 'var(--color-violet-600)',
             
               },
             }}
@@ -58,7 +58,7 @@ export default function Home() {
                   py: 1,
                   borderRadius: 2,
                   '&:hover': {
-                    backgroundColor: 'var(--color-violet-800)'
+                    backgroundColor: 'var(--color-violet-600)'
                   },
                 }}
                 onClick={() =>{ 
