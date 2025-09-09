@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Home() {
   const navigate = useNavigate();
   const top = ['Home', 'About', 'Contact'];
-  const bottom = ['Login', 'Register'];
+  const bottom = ['Register','Login'];
 
   return (
    <div className="relative flex flex-col justify-center items-start h-screen bg-gradient-to-r">
@@ -16,14 +16,14 @@ export default function Home() {
             key={key}
             sx={{
               justifyContent: 'center',
-              backgroundColor: 'rgba(72, 11, 209, 0.06)',
-              color: 'black',
+              backgroundColor: 'var(--color-violet-900)',
+              color: 'white',
               px: 4,
               py: 1,
               borderRadius: 2,
               '&:hover': {
-                backgroundColor: 'rgb(91 33 182)',
-                color: 'white',
+                backgroundColor: 'var(--color-violet-600)',
+            
               },
             }}
           >
@@ -52,18 +52,17 @@ export default function Home() {
               <Button
                 key={key}
                 sx={{
-                  backgroundColor: 'rgba(72, 11, 209, 0.06)',
-                  color: 'black',
+                  backgroundColor: 'var(--color-violet-900)',
+                  color: 'white',
                   px: 4,
                   py: 1,
                   borderRadius: 2,
                   '&:hover': {
-                    backgroundColor: 'rgb(91 33 182)',
-                    color: 'white',
+                    backgroundColor: 'var(--color-violet-600)'
                   },
                 }}
                 onClick={() =>{ 
-              localStorage.setItem("process",bottombar.toLowerCase()),
+              sessionStorage.setItem("process",bottombar.toLowerCase()),
               navigate("/designation")}}
               >
                 {bottombar}

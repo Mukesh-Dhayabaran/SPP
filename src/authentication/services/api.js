@@ -6,7 +6,8 @@ const REGISTER_URL = `/accounts:signUp?key=${API_KEY}`
 const LOGIN_URL = `/accounts:signInWithPassword?key=${API_KEY}`
 
 export const RegisterAPI = (inputs) => {
-    console.log(inputs.name);
+    
+    sessionStorage.setItem("username", inputs.name);
     
     let data = {
         displayName : inputs.name,
@@ -15,6 +16,15 @@ export const RegisterAPI = (inputs) => {
     }
     return axios.post(REGISTER_URL,data)
 }
+
+const LOOKUP_URL = `/accounts:lookup?key=${API_KEY}`;
+
+export const fetchUserProfile = (idToken) => {
+  return axios.post(LOOKUP_URL, {
+    idToken: idToken
+  });
+};
+
 
 export const LoginAPI = (inputs) => {
     console.log(inputs.password);

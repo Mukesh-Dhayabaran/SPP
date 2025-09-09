@@ -9,14 +9,16 @@ export default function Designation() {
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Who are you?</h1>
+        <h1 className="text-3xl font-bold mb-8 text-violet-900">Who are you?</h1>
 
         {/* Role Selection Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mt-20">
           {/* Student Card */}
           <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
-                localStorage.setItem("designation","student");
+                sessionStorage.setItem("designation","student");
+                // console.log(sesssionStorage.getItem("designation"));
+                navigate(`${sessionStorage.getItem("process").toLowerCase()}`);
             }}
             >
             <img
@@ -54,7 +56,9 @@ export default function Designation() {
             {/* Teacher Card */}
           <div className="bg-white p-10 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
-                localStorage.setItem("designation","teacher");
+                sessionStorage.setItem("designation","teacher");
+               // console.log(sessionStorage.getItem("designation"));
+                navigate(`${sessionStorage.getItem("process").toLowerCase()}`);
             }}       
                >
             <img
@@ -80,10 +84,7 @@ export default function Designation() {
                 '&:hover': {
                     backgroundColor: 'success.dark',
                 },
-            }}
-                onClick={()=>{
-                    navigate("/register");
-                }}>
+            }}>
               Continue as Teacher
             </Button>
 
