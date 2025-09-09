@@ -1,4 +1,4 @@
-import { Button, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,8 +17,6 @@ export default function Designation() {
           <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
                 localStorage.setItem("designation","student");
-                // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("process").toLowerCase()}`);
             }}
             >
             <img
@@ -45,19 +43,18 @@ export default function Designation() {
                     backgroundColor: 'primary.dark',
                 },
             }}
-            
-            
+            onClick={()=>{
+                navigate("/register");
+            }}
             >
               Continue as Student
             </Button>
           </div>
 
-          {/* Teacher Card */}
+            {/* Teacher Card */}
           <div className="bg-white p-10 rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
                onClick={()=>{
                 localStorage.setItem("designation","teacher");
-               // console.log(localStorage.getItem("designation"));
-                navigate(`${localStorage.getItem("process").toLowerCase()}`);
             }}       
                >
             <img
@@ -89,9 +86,38 @@ export default function Designation() {
                 }}>
               Continue as Teacher
             </Button>
-          </div>
+
+            </div>
         </div>
       </div>
-    </div>
-  )
+      
+        <Box
+          sx={{
+            position: 'fixed',
+            top: { xs: -60, sm: -80, md: -100 },
+            right: { xs: -60, sm: -80, md: -100 },
+            width: { xs: 150, sm: 250, md: 400 },
+            height: { xs: 150, sm: 250, md: 400 },
+            borderRadius: '50%',
+            backgroundColor: '#5B21B6',
+            opacity: 0.1
+            }}
+          />
+
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: { xs: -60, sm: -80, md: -100 },
+            left: { xs: -60, sm: -80, md: -100 },
+            width: { xs: 150, sm: 250, md: 400 },
+            height: { xs: 150, sm: 250, md: 400 },
+            borderRadius: '50%',
+            backgroundColor: '#5B21B6',
+            opacity: 0.1
+          }}
+        />
+
+          
+    </div>
+  )
 }
