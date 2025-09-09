@@ -9,7 +9,7 @@ export default function Designation() {
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Who are you?</h1>
+        <h1 className="text-3xl font-bold mb-8 text-violet-900">Who are you?</h1>
 
         {/* Role Selection Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto mt-20">
