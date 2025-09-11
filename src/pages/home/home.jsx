@@ -7,6 +7,19 @@ export default function Home() {
   const navigate = useNavigate();
   const top = ['Home', 'About', 'Contact'];
   const bottom = ['Register','Login'];
+  const buttonStyle = {
+                  backgroundColor: 'var(--color-violet-900)',
+                  color: 'white',
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  
+                  border: '2px solid var(--color-violet-900)',
+                  '&:hover': {
+                    color: 'var(--color-violet-900)',
+                    backgroundColor: '#EAE7ED',
+                  },
+                };
 
   return (
    <div className="relative flex flex-col justify-center items-start h-screen bg-gradient-to-r">
@@ -14,18 +27,7 @@ export default function Home() {
         {top.map((topbar, key) => (
           <Button
             key={key}
-            sx={{
-              justifyContent: 'center',
-              backgroundColor: 'var(--color-violet-900)',
-              color: 'white',
-              px: 4,
-              py: 1,
-              borderRadius: 2,
-              '&:hover': {
-                backgroundColor: 'var(--color-violet-600)',
-            
-              },
-            }}
+            sx={buttonStyle}
           >
             {topbar}
           </Button>
@@ -51,16 +53,7 @@ export default function Home() {
             {bottom.map((bottombar, key) => (
               <Button
                 key={key}
-                sx={{
-                  backgroundColor: 'var(--color-violet-900)',
-                  color: 'white',
-                  px: 4,
-                  py: 1,
-                  borderRadius: 2,
-                  '&:hover': {
-                    backgroundColor: 'var(--color-violet-600)'
-                  },
-                }}
+                sx={buttonStyle}
                 onClick={() =>{ 
               sessionStorage.setItem("process",bottombar.toLowerCase()),
               navigate("/designation")}}

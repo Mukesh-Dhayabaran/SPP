@@ -45,9 +45,6 @@ export default function Designation() {
                     backgroundColor: 'primary.dark',
                 },
             }}
-            onClick={()=>{
-                navigate("/register");
-            }}
             >
               Continue as Student
             </Button>
