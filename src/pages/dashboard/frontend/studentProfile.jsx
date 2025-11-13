@@ -9,34 +9,29 @@ export default function StudentProfile() {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const registerNumber = sessionStorage.getItem("registerNumber");
+  useEffect(() => {
 
-  if (sessionStorage.getItem("designation") === "student" && !registerNumber) {
-    console.error("⚠️ No register number found in sessionStorage");
-    navigate("/designation/login");
-    return;
-  }
 
-  // ✅ Use the correct backend URL (Render)
-  const backendURL = "https://student-performance-prediction-iqg2.onrender.com";
+    const registerNumber = sessionStorage.getItem("registerNumber");
+    if (sessionStorage.getItem('designation')==='student' && !registerNumber) {
+      console.error("⚠️ No register number found in sessionStorage");
+      navigate("/designation/login");
+      return;
+    }
 
-  // ✅ Make sure URL is clean and uses HTTPS (no extra spaces)
-  fetch(`${backendURL}/get_student/${registerNumber}`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Failed to fetch student data");
-      return res.json();
-    })
-    .then((data) => {
-      console.log("✅ Fetched student data:", data);
-      setStudent(data);
-    })
-    .catch((err) => {
-      console.error("❌ Error fetching student:", err);
-    })
-    .finally(() => setLoading(false));
-}, [navigate]);
-
+      fetch(`http://student-performance-prediction-iqg2.onrender.com/get_student/${registerNumber}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch student data");
+        return res.json();
+      })
+      
+      .then((data) => {
+        console.log("Fetched student data:", data);
+        setStudent(data)
+      })
+      .catch((err) => console.error("❌ Error fetching student:", err))
+      .finally(() => setLoading(false));
+  }, [navigate]);
 
   if (loading) {
     return (
