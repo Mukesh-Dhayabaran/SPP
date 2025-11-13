@@ -24,9 +24,7 @@ export default function StudentProfile() {
         if (!res.ok) throw new Error("Failed to fetch student data");
         return res.json();
       })
-      
       .then((data) => {
-        console.log("Fetched student data:", data);
         setStudent(data)
       })
       .catch((err) => console.error("❌ Error fetching student:", err))
