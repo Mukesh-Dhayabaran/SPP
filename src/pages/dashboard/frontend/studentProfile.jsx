@@ -19,7 +19,7 @@ export default function StudentProfile() {
       return;
     }
 
-    fetch(`http:// https://student-performance-prediction-iqg2.onrender.com/get_student/${registerNumber}`)
+    fetch(`https://student-performance-prediction-iqg2.onrender.com/get_student/${registerNumber}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch student data");
         return res.json();
