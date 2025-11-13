@@ -3,11 +3,17 @@ from flask_cors import CORS
 from pymongo import MongoClient
 import joblib
 import pandas as pd
+import os
 
+# -------------------------------
+# ✅ Flask App Initialization
+# -------------------------------
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins (safe for Render)
 
-# Load trained model
+# -------------------------------
+# ✅ Load Trained Model
+# -------------------------------
 model = joblib.load("model.joblib")
 
 FEATURE_ORDER = [
@@ -24,16 +30,27 @@ FEATURE_ORDER = [
 support_map = {"Low": 0, "Medium": 1, "High": 2}
 yes_no_map = {"Yes": 1, "No": 0}
 
-# MongoDB connection
-client = MongoClient("mongodb+srv://Mukesh_D:Mukesh2006@spp.ccz5xcn.mongodb.net/?retryWrites=true&w=majority&appName=spp")
+# -------------------------------
+# ✅ MongoDB Connection (via ENV)
+# -------------------------------
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise Exception("❌ MONGO_URI not found in environment variables!")
+
+client = MongoClient(MONGO_URI)
 db = client["spp"]
 students_col = db["students"]
+
+# -------------------------------
+# ✅ Routes
+# -------------------------------
 
 @app.route("/")
 def home():
     return jsonify({"message": "✅ Flask app is running successfully!"})
 
-# ✅ Store or update student basic info
+
+# ✅ Store or update student info
 @app.route("/store_student_info", methods=["POST"])
 def store_student_info():
     try:
@@ -64,7 +81,8 @@ def store_student_info():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ Predict and conditionally save student record
+
+# ✅ Predict and optionally save
 @app.route("/predict", methods=["POST"])
 def predict_and_save():
     try:
@@ -97,16 +115,13 @@ def predict_and_save():
         else:
             category = "Low"
 
-        # ✅ Only save to MongoDB if user is a teacher
+        # ✅ Only save if user is a teacher
         if designation == "teacher":
             students_col.update_one(
                 {"Register_Number": register_number},
                 {
                     "$set": {
-                        "Hours_Studied_Per_Week": row["Hours_Studied_Per_Week"],
-                        "Attendance": row["Attendance"],
-                        "Previous_Exam_Percent": row["Previous_Exam_Percent"],
-                        "Failures": row["Failures"],
+                        **row,
                         "Sports": "Yes" if row["Sports"] else "No",
                         "Tuition": "Yes" if row["Tuition"] else "No",
                         "Parents_Support": data.get("Parents_Support", "Medium"),
@@ -127,7 +142,8 @@ def predict_and_save():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ Fetch a single student by register number
+
+# ✅ Fetch single student
 @app.route("/get_student/<register_number>", methods=["GET"])
 def get_student(register_number):
     try:
@@ -138,12 +154,17 @@ def get_student(register_number):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ Optional: Fetch all students
+
+# ✅ Fetch all students
 @app.route("/students", methods=["GET"])
 def get_all_students():
     students = list(students_col.find({}, {"_id": 0}))
     return jsonify(students)
 
+
+# -------------------------------
+# ✅ Entry Point
+# -------------------------------
 if __name__ == "__main__":
-    print("🚀 Flask server running at: http://127.0.0.1:5000")
+    print("🚀 Flask server running at: http://0.0.0.0:5000")
     app.run(debug=True, host="0.0.0.0", port=5000)
