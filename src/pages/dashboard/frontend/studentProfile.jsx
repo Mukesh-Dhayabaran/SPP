@@ -19,12 +19,16 @@ export default function StudentProfile() {
       return;
     }
 
-      fetch(`https://student-performance-prediction-iqg2.onrender.com/get_student/${registerNumber}`)
+      fetch(`http://student-performance-prediction-iqg2.onrender.com/get_student/${registerNumber}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch student data");
         return res.json();
       })
-      .then((data) => setStudent(data))
+      
+      .then((data) => {
+        console.log("Fetched student data:", data);
+        setStudent(data)
+      })
       .catch((err) => console.error("❌ Error fetching student:", err))
       .finally(() => setLoading(false));
   }, [navigate]);

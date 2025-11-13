@@ -10,7 +10,7 @@ app = Flask(__name__)
 # ✅ Allow requests from your Render frontend or local dev
 CORS(app, resources={r"/*": {"origins": [
     "http://localhost:5173",  # for local development
-    "https://studentperformanceprediction.vercel.app",  # replace with your deployed frontend URL if any
+    "https://studentperformanceprediction.vercel.app" 
 ]}})
 
 
