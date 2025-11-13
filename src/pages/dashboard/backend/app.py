@@ -7,13 +7,13 @@ import os
 
 app = Flask(__name__)
 
-# -------------------------------
-# ✅ CORS Configuration
-# -------------------------------
+# ✅ Allow requests from your Render frontend or local dev
 CORS(app, resources={r"/*": {"origins": [
-    "http://localhost:5173",  # for local dev
-    "https://studentperformanceprediction.vercel.app"  # your deployed frontend
+    "http://localhost:5173",  # for local development
+    "https://studentperformanceprediction.vercel.app",  # replace with your deployed frontend URL if any
+    "https://student-performance-prediction-iqg2.onrender.com"  # your Flask backend itself
 ]}})
+
 
 # -------------------------------
 # ✅ Load Trained Model
@@ -52,6 +52,7 @@ students_col = db["students"]
 @app.route("/")
 def home():
     return jsonify({"message": "✅ Flask app is running successfully!"})
+
 
 # ✅ Store or update student info
 @app.route("/store_student_info", methods=["POST"])
@@ -170,4 +171,4 @@ def get_all_students():
 # -------------------------------
 if __name__ == "__main__":
     print("🚀 Flask server running at: http://0.0.0.0:5000")
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True, host="0.0.0.0", port=5000)
