@@ -8,10 +8,17 @@ import {
   Select,
   MenuItem,
   FormControl,
+  CircularProgress,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function Forms({ onPredicted }) {
   const API_BASE = import.meta?.env?.VITE_API_BASE || "http://localhost:5000";
+
+  const navigate = useNavigate(); 
+
+  const registerNumber = sessionStorage.getItem("registerNumber");
+  const designationValue = sessionStorage.getItem("designation"); // student or teacher
 
   const [inputs, setInputs] = useState({
     Hours_Studied_Per_Week: "",
@@ -23,7 +30,9 @@ export function Forms({ onPredicted }) {
     Parents_Support: "Medium",
     Internet_Facility: false,
   });
+
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const setField = (k, v) => setInputs((s) => ({ ...s, [k]: v }));
 
@@ -40,7 +49,10 @@ export function Forms({ onPredicted }) {
   const submit = async () => {
     if (!validate()) return;
 
+    setLoading(true);
+
     const payload = {
+      Roll_Number: registerNumber,
       Hours_Studied_Per_Week: Number(inputs.Hours_Studied_Per_Week),
       Attendance: Number(inputs.Attendance),
       Previous_Exam_Percent: Number(inputs.Previous_Exam_Percent),
@@ -49,6 +61,7 @@ export function Forms({ onPredicted }) {
       Tuition: inputs.Tuition ? "Yes" : "No",
       Parents_Support: inputs.Parents_Support,
       Internet_Facility: inputs.Internet_Facility ? "Yes" : "No",
+      designation: designationValue || "student",
     };
 
     try {
@@ -57,12 +70,18 @@ export function Forms({ onPredicted }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!resp.ok) throw new Error("Network error");
+
       const data = await resp.json();
       onPredicted(data);
+
+      alert(data.message || "Prediction done successfully!");
     } catch (err) {
       console.error(err);
       alert("Prediction failed. Make sure backend is running at " + API_BASE);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,7 +118,6 @@ export function Forms({ onPredicted }) {
 
   const textFieldStyles = {
     width: "100%",
-    // maxWidth: "450px",
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "var(--color-violet-900)",
       borderWidth: "2px",
@@ -108,7 +126,7 @@ export function Forms({ onPredicted }) {
       color: "var(--color-violet-900)",
     },
     "& .MuiOutlinedInput-input": {
-      fontSize: "1.2rem", // Input text
+      fontSize: "1.2rem",
     },
     "& .MuiInputLabel-root": {
       fontSize: "1.2rem",
@@ -121,28 +139,11 @@ export function Forms({ onPredicted }) {
   };
 
   const CheckboxAttributes = ["Sports", "Tuition", "Internet_Facility"];
-
-  const CheckboxStyles = {
-    // color: "var(--color-violet-900)",
-    "&.Mui-checked": {
-      color: "var(--color-violet-900)",
-    },
-  };
-
-  const selectStyles = {
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--color-violet-900)", // default outline color
-    },
-    "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--color-violet-900)", // on hover
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--color-violet-900)", // on focus
-    },
-  };
+  const CheckboxStyles = { "&.Mui-checked": { color: "var(--color-violet-900)" } };
+  const selectStyles = { "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "var(--color-violet-900)" } };
 
   return (
-    <div className="flex flex-col  m-7 bg-white shadow-md rounded-lg">
+    <div className="flex flex-col m-7 bg-white shadow-md rounded-lg">
       <div className="flex flex-col gap-16 p-14">
         <div className="grid grid-cols-2 gap-x-8 gap-y-8">
           {textFieldAttributeds.map((attr, index) => (
@@ -160,7 +161,7 @@ export function Forms({ onPredicted }) {
           ))}
         </div>
 
-        <div className="flex  justify-around">
+        <div className="flex justify-around">
           {CheckboxAttributes.map((attr, index) => (
             <FormControlLabel
               key={index}
@@ -172,16 +173,11 @@ export function Forms({ onPredicted }) {
                 />
               }
               label={attr.replace(/_/g, " ")}
-              />
-            ))}
+            />
+          ))}
+
           <FormControl>
-            <InputLabel
-              sx={{
-                  "&.Mui-focused": {
-                      color: "var(--color-violet-900)", // color when focused
-                    },
-                }}
-                >
+            <InputLabel sx={{ "&.Mui-focused": { color: "var(--color-violet-900)" } }}>
               Parents Support
             </InputLabel>
             <Select
@@ -189,7 +185,7 @@ export function Forms({ onPredicted }) {
               value={inputs.Parents_Support}
               onChange={(e) => setField("Parents_Support", e.target.value)}
               sx={{ minWidth: 200, ...selectStyles }}
-              >
+            >
               <MenuItem value="Low">Low</MenuItem>
               <MenuItem value="Medium">Medium</MenuItem>
               <MenuItem value="High">High</MenuItem>
@@ -197,24 +193,54 @@ export function Forms({ onPredicted }) {
           </FormControl>
         </div>
       </div>
+<div className="flex flex-row items-center justify-center">
 
+          <Button
+          sx={{
+            // backgroundColor: "var(--color-violet-900)",
+            color: "var(--color-violet-900)",
+            margin: "0px 20px 20px 20px",
+            border:"2px solid var(--color-violet-900)",
+            borderRadius: "10px",
+            fontSize: "25px",
+            width: "full",
+            padding: "20px 300px",
+            textAlign: "center",
+            textTransform: "none",
+            cursor: "pointer",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            "&:hover": { backgroundColor: "var(--color-violet-900)" ,
+            color: "white"},
+          }}
+          onClick={navigate.bind(this, designationValue === "student" ? "/studentprofile" : "/dashboard")}>
+            Back
+          </Button>
       <Button
         sx={{
           backgroundColor: "var(--color-violet-900)",
+          color: "white",
+          border:"2px solid var(--color-violet-900)",
+          textTransform: "none",
+          margin: "0px 20px 20px 20px",
+          borderRadius: "10px",
           fontSize: "25px",
           width: "full",
-          padding: "20px ",
+          padding: "20px 300px",
           textAlign: "center",
-          color: "#fff",
           cursor: "pointer",
-          "&:hover": {
-            backgroundColor: "var(--color-violet-500)",
-          },
+          "&:hover": { backgroundColor: "white" ,color: "var(--color-violet-900)"},
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
         onClick={submit}
+        disabled={loading}
       >
-        Predict
+        {loading ? <CircularProgress size={44} sx={{ color: "#fff" }} /> : "Predict"}
       </Button>
+        </div>
     </div>
   );
 }

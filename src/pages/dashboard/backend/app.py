@@ -1,109 +1,95 @@
-# # app.py
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# import pandas as pd
-# import joblib, os
-# import numpy as np
-
-# app = Flask(__name__)
-# CORS(app)
-
-# DATA_CSV = "../data/student_performance_dataset.csv"  # relative to backend/
-# MODEL_FILE = "model.joblib"
-# FEATURE_ORDER = ["Hours_Studied_Per_Week","Attendance","Previous_Exam_Percent","Failures",
-#                  "Sports","Tuition","Parents_Support","Internet_Facility"]
-
-# def train_if_needed():
-#     global model
-#     if os.path.exists(MODEL_FILE):
-#         model = joblib.load(MODEL_FILE)
-#         print("Loaded model from", MODEL_FILE)
-#         return
-#     # else train
-#     print("Training model from CSV:", DATA_CSV)
-#     df = pd.read_csv(DATA_CSV)
-#     # encode
-#     df["Sports"] = df["Sports"].map({"Yes":1,"No":0})
-#     df["Tuition"] = df["Tuition"].map({"Yes":1,"No":0})
-#     df["Internet_Facility"] = df["Internet_Facility"].map({"Yes":1,"No":0})
-#     df["Parents_Support"] = df["Parents_Support"].map({"Low":0,"Medium":1,"High":2})
-#     X = df[FEATURE_ORDER]
-#     y = df["Performance"]
-#     from sklearn.ensemble import RandomForestRegressor
-#     m = RandomForestRegressor(n_estimators=200, random_state=42)
-#     m.fit(X,y)
-#     joblib.dump(m, MODEL_FILE)
-#     model = m
-#     print("Trained and saved model as", MODEL_FILE)
-
-# train_if_needed()
-
-# def preprocess_payload(payload):
-#     # safe conversions and defaults
-#     row = {}
-#     row["Hours_Studied_Per_Week"] = float(payload.get("Hours_Studied_Per_Week", 0))
-#     row["Attendance"] = float(payload.get("Attendance", 0))
-#     row["Previous_Exam_Percent"] = float(payload.get("Previous_Exam_Percent", 0))
-#     row["Failures"] = int(payload.get("Failures", 0))
-#     for key in ["Sports","Tuition","Internet_Facility"]:
-#         val = payload.get(key, "No")
-#         if isinstance(val, bool):
-#             val = "Yes" if val else "No"
-#         row[key] = 1 if str(val).lower() in ("yes","1","true","y") else 0
-#     ps = payload.get("Parents_Support", "Medium")
-#     if ps not in ("Low","Medium","High"): ps = "Medium"
-#     row["Parents_Support"] = {"Low":0,"Medium":1,"High":2}[ps]
-#     return pd.DataFrame([row], columns=FEATURE_ORDER)
-
-# @app.route("/predict", methods=["POST"])
-# def predict():
-#     payload = request.get_json(force=True)
-#     X = preprocess_payload(payload)
-#     y_pred = float(model.predict(X)[0])
-#     category = "Poor" if y_pred < 50 else ("Average" if y_pred < 70 else ("Good" if y_pred < 85 else "Excellent"))
-#     return jsonify({"predicted_score": round(y_pred,2), "category": category})
-
-# if __name__ == "__main__":
-#     app.run(debug=True, host="0.0.0.0", port=5000)
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from pymongo import MongoClient
 import joblib
-import numpy as np
+import pandas as pd
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 # Load trained model
 model = joblib.load("model.joblib")
 
-# Mapping categorical values
+FEATURE_ORDER = [
+    "Hours_Studied_Per_Week",
+    "Attendance",
+    "Previous_Exam_Percent",
+    "Failures",
+    "Sports",
+    "Tuition",
+    "Parents_Support",
+    "Internet_Facility"
+]
+
 support_map = {"Low": 0, "Medium": 1, "High": 2}
 yes_no_map = {"Yes": 1, "No": 0}
 
-@app.route("/predict", methods=["POST"])
-def predict():
+# MongoDB connection
+client = MongoClient("mongodb+srv://Mukesh_D:Mukesh2006@spp.ccz5xcn.mongodb.net/?retryWrites=true&w=majority&appName=spp")
+db = client["spp"]
+students_col = db["students"]
+
+@app.route("/")
+def home():
+    return jsonify({"message": "✅ Flask app is running successfully!"})
+
+# ✅ Store or update student basic info
+@app.route("/store_student_info", methods=["POST"])
+def store_student_info():
     try:
         data = request.get_json()
+        name = data.get("name", "").strip()
+        register_number = data.get("registerNumber", "").strip()
+        student_class = data.get("class", "").strip()
+        section = data.get("section", "").strip()
 
-        # Extract inputs
-        Hours_Studied_Per_Week = float(data.get("Hours_Studied_Per_Week", 0))
-        Attendance = float(data.get("Attendance", 0))
-        Previous_Exam_Percent = float(data.get("Previous_Exam_Percent", 0))
-        Failures = int(data.get("Failures", 0))
-        Sports = yes_no_map.get(data.get("Sports", "No"), 0)
-        Tuition = yes_no_map.get(data.get("Tuition", "No"), 0)
-        Parents_Support = support_map.get(data.get("Parents_Support", "Medium"), 1)
-        Internet_Facility = yes_no_map.get(data.get("Internet_Facility", "No"), 0)
+        if not name or not register_number:
+            return jsonify({"error": "Name and Register Number are required"}), 400
 
-        # Build feature array
-        features = np.array([[Hours_Studied_Per_Week, Attendance, Previous_Exam_Percent,
-                              Failures, Sports, Tuition, Parents_Support, Internet_Facility]])
+        students_col.update_one(
+            {"Register_Number": register_number},
+            {
+                "$set": {
+                    "Name": name,
+                    "Register_Number": register_number,
+                    "Class": student_class,
+                    "Section": section,
+                }
+            },
+            upsert=True
+        )
 
-        # Predict
-        predicted_score = model.predict(features)[0]
-        predicted_score = round(float(predicted_score), 2)
+        return jsonify({"message": "✅ Student information saved/updated successfully!"})
 
-        # Category mapping
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ✅ Predict and conditionally save student record
+@app.route("/predict", methods=["POST"])
+def predict_and_save():
+    try:
+        data = request.get_json()
+        register_number = data.get("Roll_Number") or data.get("Register_Number")
+        designation = data.get("designation", "student")  # teacher or student
+
+        if not register_number:
+            return jsonify({"error": "Register Number is required"}), 400
+
+        # Prepare data for prediction
+        row = {
+            "Hours_Studied_Per_Week": float(data.get("Hours_Studied_Per_Week", 0)),
+            "Attendance": float(data.get("Attendance", 0)),
+            "Previous_Exam_Percent": float(data.get("Previous_Exam_Percent", 0)),
+            "Failures": int(data.get("Failures", 0)),
+            "Sports": yes_no_map.get(data.get("Sports", "No"), 0),
+            "Tuition": yes_no_map.get(data.get("Tuition", "No"), 0),
+            "Parents_Support": support_map.get(data.get("Parents_Support", "Medium"), 1),
+            "Internet_Facility": yes_no_map.get(data.get("Internet_Facility", "No"), 0)
+        }
+
+        features = pd.DataFrame([row], columns=FEATURE_ORDER)
+        predicted_score = round(float(model.predict(features)[0]), 2)
+
         if predicted_score >= 80:
             category = "High"
         elif predicted_score >= 50:
@@ -111,14 +97,53 @@ def predict():
         else:
             category = "Low"
 
+        # ✅ Only save to MongoDB if user is a teacher
+        if designation == "teacher":
+            students_col.update_one(
+                {"Register_Number": register_number},
+                {
+                    "$set": {
+                        "Hours_Studied_Per_Week": row["Hours_Studied_Per_Week"],
+                        "Attendance": row["Attendance"],
+                        "Previous_Exam_Percent": row["Previous_Exam_Percent"],
+                        "Failures": row["Failures"],
+                        "Sports": "Yes" if row["Sports"] else "No",
+                        "Tuition": "Yes" if row["Tuition"] else "No",
+                        "Parents_Support": data.get("Parents_Support", "Medium"),
+                        "Internet_Facility": "Yes" if row["Internet_Facility"] else "No",
+                        "predicted_score": predicted_score,
+                        "category": category,
+                    }
+                },
+                upsert=True
+            )
+
         return jsonify({
             "predicted_score": predicted_score,
-            "category": category
+            "category": category,
+            "message": "✅ Prediction completed!" + (" Student data saved." if designation == "teacher" else "")
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ✅ Fetch a single student by register number
+@app.route("/get_student/<register_number>", methods=["GET"])
+def get_student(register_number):
+    try:
+        student = students_col.find_one({"Register_Number": register_number}, {"_id": 0})
+        if not student:
+            return jsonify({"error": "Student not found"}), 404
+        return jsonify(student)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ✅ Optional: Fetch all students
+@app.route("/students", methods=["GET"])
+def get_all_students():
+    students = list(students_col.find({}, {"_id": 0}))
+    return jsonify(students)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    print("🚀 Flask server running at: http://127.0.0.1:5000")
+    app.run(debug=True, host="0.0.0.0", port=5000)
