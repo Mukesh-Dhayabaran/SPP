@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 
 export function Prediction({ result, onBack }) {
+  console.log(result);  
   if (!result) return null;
   return (
     <div className="flex flex-col  m-10 mt-20 bg-white shadow-md rounded-lg">

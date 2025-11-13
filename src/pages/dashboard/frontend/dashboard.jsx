@@ -1,4 +1,3 @@
-// Dashboard.jsx
 import React, { useState } from "react";
 import { Button, Checkbox, TextField, FormControlLabel } from "@mui/material";
 import { Forms } from "./forms";
@@ -17,7 +16,7 @@ export default function Dashboard() {
   return (
     <div className="text-center" >
 
-      <div className="flex gap-40 justify-end items-center bg-violet-900 rounded-b-4xl p-12">
+      <div className="flex gap-40 justify-end items-center bg-violet-900 rounded-b-4xl p-10">
 
         <h1 className=" font-bold text-6xl text-white ">Student Performance Predictor</h1>
         <ProfileCircle/>
@@ -26,7 +25,7 @@ export default function Dashboard() {
 
 
       {mode === "form" ? (
-        <Forms onPredicted={(r) => { setResult(r); setMode("result"); }} />
+        <Forms onPredicted={(r) => { setResult(r); setMode("result"); }} /> 
       ) : (
         <Prediction result={result} onBack={() => setMode("form")} />
       )}

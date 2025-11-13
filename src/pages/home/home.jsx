@@ -4,8 +4,9 @@ import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+
   const navigate = useNavigate();
-  const top = ['Home', 'About', 'Contact'];
+  const top = [];
   const bottom = ['Register','Login'];
   const buttonStyle = {
                   backgroundColor: 'var(--color-violet-900)',
@@ -20,6 +21,9 @@ export default function Home() {
                     backgroundColor: '#EAE7ED',
                   },
                 };
+
+      localStorage.clear();
+                
 
   return (
    <div className="relative flex flex-col justify-center items-start h-screen bg-gradient-to-r">
@@ -53,7 +57,14 @@ export default function Home() {
             {bottom.map((bottombar, key) => (
               <Button
                 key={key}
-                sx={buttonStyle}
+                 sx={{
+      ...buttonStyle,
+      ...(bottombar === "Login"
+        ? { px: 6 }
+        : bottombar === "Register"
+        ? { px: 4 }
+        : {}),
+    }}
                 onClick={() =>{ 
               sessionStorage.setItem("process",bottombar.toLowerCase()),
               navigate("/designation")}}
