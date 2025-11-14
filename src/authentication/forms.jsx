@@ -79,7 +79,7 @@ export default function Forms({ formAttributes }) {
       const data = await res.json();
       console.log("✅ Student info saved:", data);
     } catch (err) {
-      console.error("❌ Error saving student info:", err);
+      console.error("❌ Error saving student:", err);
     }
   };
 
