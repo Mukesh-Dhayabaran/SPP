@@ -58,7 +58,7 @@ def home():
 def store_student_info():
     try:
         data = request.get_json()
-        name = data.get("name", "").strip()
+        name = data.get("name", "").strip() 
         register_number = data.get("registerNumber", "").strip()
         student_class = data.get("class", "").strip()
         section = data.get("section", "").strip()

@@ -65,7 +65,7 @@ export default function Forms({ formAttributes }) {
 
   const saveStudentToBackend = async (registerNumber, name, studentClass, section) => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/store_student_info", {
+      const res = await fetch("https://student-performance-prediction-iqg2.onrender.com/store_student_info", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
